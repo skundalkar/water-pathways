@@ -3,10 +3,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { certificationGuide, glossary, lessons } from "../lib/content";
 import { ExamInfo } from "./exam-info";
+import { ConversionSheet } from "./conversion-sheet";
 import { chemicalPoundsPerDay, flowGpm, forceOnValve, gallonsInPipe, pipeArea, pressureToHead, scorePercent, velocityFps } from "../lib/math";
 import { Grade, MasteryRecord, Question } from "../lib/types";
 
-type View = "learn" | "exam" | "diagnostic" | "calculator" | "guide" | "glossary";
+type View = "learn" | "exam" | "diagnostic" | "calculator" | "formula-sheet" | "guide" | "glossary";
 const storageKey = "water-pathways-progress-v1";
 
 export default function Home() {
@@ -37,13 +38,14 @@ export default function Home() {
   function nextLesson() { setLessonIndex((n) => (n + 1) % availableLessons.length); setAnswers({}); setSubmitted(false); window.scrollTo({ top: 0, behavior: "smooth" }); }
 
   return <main>
-    <header className="topbar"><a className="brand" href="#top" onClick={() => setView("learn")}><span>◒</span> Water Pathways</a><nav>{(["learn", "diagnostic", "calculator", "guide", "glossary"] as View[]).map((item) => <button key={item} className={view === item ? "active" : ""} onClick={() => setView(item)}>{item === "learn" ? "Learn" : item[0].toUpperCase() + item.slice(1)}</button>)}</nav></header>
+    <header className="topbar"><a className="brand" href="#top" onClick={() => setView("learn")}><span>◒</span> Water Pathways</a><nav>{(["learn", "exam", "diagnostic", "calculator", "formula-sheet", "guide", "glossary"] as View[]).map((item) => <button key={item} className={view === item ? "active" : ""} onClick={() => setView(item)}>{item === "learn" ? "Learn" : item === "formula-sheet" ? "Formula sheet" : item[0].toUpperCase() + item.slice(1)}</button>)}</nav></header>
     <section className="hero" id="top"><div><p className="eyebrow">CALIFORNIA WATER DISTRIBUTION • BEGINNER FRIENDLY</p><h1>Learn the water system.<br /><em>One clear step at a time.</em></h1><p className="lede">Build confidence for California D1 and D2 with everyday examples, field stories, and practice that explains every answer.</p></div><div className="progress-card"><span>Your study path</span><strong>{grade} preparation</strong><div className="meter"><i style={{ width: `${Math.min(100, Object.keys(mastery).length * 20)}%` }} /></div><small>{Object.keys(mastery).length} objectives practiced · {needsReview} need review</small></div></section>
     <section className="grade-picker" aria-label="Choose certificate level"><span>Preparing for</span><button className={grade === "D1" ? "selected" : ""} onClick={() => selectGrade("D1")}>D1 Foundation</button><button className={grade === "D2" ? "selected" : ""} onClick={() => selectGrade("D2")}>D2 Advanced</button><p>New here? Begin with D1. D2 adds more application, equipment, and map-reading depth.</p></section>
     {view === "learn" && <LessonScreen lesson={lesson} lessonNumber={lessonIndex + 1} totalLessons={availableLessons.length} answers={answers} setAnswers={setAnswers} submitted={submitted} submitQuiz={submitQuiz} nextLesson={nextLesson} />}
     {view === "exam" && <ExamInfo />}
     {view === "diagnostic" && <Diagnostic grade={grade} mastery={mastery} setMastery={setMastery} />}
     {view === "calculator" && <Calculator />}
+    {view === "formula-sheet" && <ConversionSheet />}
     {view === "guide" && <><Guide /><StudyResources /></>}
     {view === "glossary" && <Glossary />}
     <footer><strong>Water Pathways</strong><p>A study aid, not an official State Water Board application or accredited course. Always confirm current rules, forms, fees, and exam requirements with the official source.</p></footer>
