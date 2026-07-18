@@ -1,0 +1,10 @@
+export type Grade = "D1" | "D2" | "Both";
+export type LearningObjective = { id: string; title: string; grade: Grade; category: string };
+export type Analogy = { title: string; text: string };
+export type FieldAnecdote = { title: string; story: string; takeaway: string };
+export type WorkedExample = { title: string; steps: string[]; answer: string };
+export type Question = { id: string; prompt: string; choices: string[]; answer: number; explanation: string; objectiveId: string };
+export type Lesson = { id: string; phase: number; title: string; grade: Grade; objective: LearningObjective; intro: string; analogy: Analogy; visual: string[]; application: string; anecdote: FieldAnecdote; example?: WorkedExample; questions: Question[] };
+export type GlossaryTerm = { term: string; pronunciation?: string; definition: string; lessonId: string };
+export type CertificationGuideEntry = { title: string; body: string; source: string; url: string; verified: string };
+export type MasteryRecord = Record<string, { correct: number; attempts: number }>;
