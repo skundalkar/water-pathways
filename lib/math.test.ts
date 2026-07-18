@@ -1,3 +1,3 @@
 import { describe, expect, it } from "vitest";
-import { gallonsInPipe, pressureToHead, scorePercent } from "./math";
-describe("water math", () => { it("calculates head from pressure", () => expect(pressureToHead(40)).toBeCloseTo(92.4)); it("calculates pipe volume", () => expect(gallonsInPipe(12, 10)).toBeCloseTo(58.75, 1)); it("scores attempts", () => expect(scorePercent(3, 4)).toBe(75)); });
+import { chemicalPoundsPerDay, flowGpm, gallonsInPipe, pressureToHead, scorePercent, velocityFps } from "./math";
+describe("water math", () => { it("calculates head from pressure", () => expect(pressureToHead(40)).toBeCloseTo(92.4)); it("calculates pipe volume", () => expect(gallonsInPipe(12, 10)).toBeCloseTo(58.75, 1)); it("calculates flow and velocity", () => { expect(flowGpm(120, 2)).toBe(60); expect(velocityFps(100, 8)).toBeCloseTo(.638, 2); }); it("calculates chemical feed", () => expect(chemicalPoundsPerDay(2, 1.5)).toBeCloseTo(25.02)); it("scores attempts", () => expect(scorePercent(3, 4)).toBe(75)); });
