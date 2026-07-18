@@ -2,10 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { certificationGuide, glossary, lessons } from "../lib/content";
+import { ExamInfo } from "./exam-info";
 import { chemicalPoundsPerDay, flowGpm, forceOnValve, gallonsInPipe, pipeArea, pressureToHead, scorePercent, velocityFps } from "../lib/math";
 import { Grade, MasteryRecord, Question } from "../lib/types";
 
-type View = "learn" | "diagnostic" | "calculator" | "guide" | "glossary";
+type View = "learn" | "exam" | "diagnostic" | "calculator" | "guide" | "glossary";
 const storageKey = "water-pathways-progress-v1";
 
 export default function Home() {
@@ -39,7 +40,8 @@ export default function Home() {
     <header className="topbar"><a className="brand" href="#top" onClick={() => setView("learn")}><span>◒</span> Water Pathways</a><nav>{(["learn", "diagnostic", "calculator", "guide", "glossary"] as View[]).map((item) => <button key={item} className={view === item ? "active" : ""} onClick={() => setView(item)}>{item === "learn" ? "Learn" : item[0].toUpperCase() + item.slice(1)}</button>)}</nav></header>
     <section className="hero" id="top"><div><p className="eyebrow">CALIFORNIA WATER DISTRIBUTION • BEGINNER FRIENDLY</p><h1>Learn the water system.<br /><em>One clear step at a time.</em></h1><p className="lede">Build confidence for California D1 and D2 with everyday examples, field stories, and practice that explains every answer.</p></div><div className="progress-card"><span>Your study path</span><strong>{grade} preparation</strong><div className="meter"><i style={{ width: `${Math.min(100, Object.keys(mastery).length * 20)}%` }} /></div><small>{Object.keys(mastery).length} objectives practiced · {needsReview} need review</small></div></section>
     <section className="grade-picker" aria-label="Choose certificate level"><span>Preparing for</span><button className={grade === "D1" ? "selected" : ""} onClick={() => selectGrade("D1")}>D1 Foundation</button><button className={grade === "D2" ? "selected" : ""} onClick={() => selectGrade("D2")}>D2 Advanced</button><p>New here? Begin with D1. D2 adds more application, equipment, and map-reading depth.</p></section>
-    {view === "learn" && <LessonScreen lesson={lesson} answers={answers} setAnswers={setAnswers} submitted={submitted} submitQuiz={submitQuiz} nextLesson={nextLesson} />}
+    {view === "learn" && <LessonScreen lesson={lesson} lessonNumber={lessonIndex + 1} totalLessons={availableLessons.length} answers={answers} setAnswers={setAnswers} submitted={submitted} submitQuiz={submitQuiz} nextLesson={nextLesson} />}
+    {view === "exam" && <ExamInfo />}
     {view === "diagnostic" && <Diagnostic grade={grade} mastery={mastery} setMastery={setMastery} />}
     {view === "calculator" && <Calculator />}
     {view === "guide" && <><Guide /><StudyResources /></>}
@@ -48,7 +50,7 @@ export default function Home() {
   </main>;
 }
 
-function LessonScreen({ lesson, answers, setAnswers, submitted, submitQuiz, nextLesson }: { lesson: typeof lessons[number]; answers: Record<string, number>; setAnswers: (v: Record<string, number>) => void; submitted: boolean; submitQuiz: () => void; nextLesson: () => void }) {
+function LessonScreen({ lesson, lessonNumber, totalLessons, answers, setAnswers, submitted, submitQuiz, nextLesson }: { lesson: typeof lessons[number]; lessonNumber: number; totalLessons: number; answers: Record<string, number>; setAnswers: (v: Record<string, number>) => void; submitted: boolean; submitQuiz: () => void; nextLesson: () => void }) {
   const ready = Object.keys(answers).length === lesson.questions.length;
   return <section className="lesson-wrap"><aside className="path"><p>YOUR PATH</p>{["Start here", "System basics", "Water quality", "Hydraulics", "Safe operations", "D2 readiness"].map((phase, i) => <div key={phase} className={i + 1 === lesson.phase ? "current" : i + 1 < lesson.phase ? "done" : ""}><b>{i + 1}</b>{phase}</div>)}</aside><article className="lesson"><p className="eyebrow">PHASE {lesson.phase} · {lesson.objective.category.toUpperCase()}</p><h2>{lesson.title}</h2><p className="intro">{lesson.intro}</p><section className="analogy"><span>✦</span><div><p className="label">MAKE IT FAMILIAR</p><h3>{lesson.analogy.title}</h3><p>{lesson.analogy.text}</p></div></section><section className="system-visual" aria-label="Concept diagram">{lesson.visual.map((item, i) => <div key={item}><b>{i + 1}</b><span>{item}</span>{i < lesson.visual.length - 1 && <i>→</i>}</div>)}</section><section className="copy-block"><p className="label">WHY IT MATTERS IN THE FIELD</p><p>{lesson.application}</p></section>{lesson.example && <section className="worked"><p className="label">WORK IT OUT, STEP BY STEP</p><h3>{lesson.example.title}</h3><ol>{lesson.example.steps.map((step) => <li key={step}>{step}</li>)}</ol><strong>{lesson.example.answer}</strong></section>}<section className="anecdote"><p className="label">FIELD STORY · {lesson.anecdote.title}</p><p>“{lesson.anecdote.story}”</p><strong>Remember: {lesson.anecdote.takeaway}</strong></section><Quiz questions={lesson.questions} answers={answers} setAnswers={setAnswers} submitted={submitted} submitQuiz={submitQuiz} ready={ready} />{submitted && <button className="next" onClick={nextLesson}>Continue to the next concept <span>→</span></button>}</article></section>;
 }
