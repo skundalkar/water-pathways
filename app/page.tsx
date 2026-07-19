@@ -5,6 +5,7 @@ import { certificationGuide, glossary, lessons } from "../lib/content";
 import { ExamInfo } from "./exam-info";
 import { ConversionSheet } from "./conversion-sheet";
 import { OfficialPath } from "./official-path";
+import { BankDiagnostic } from "./bank-diagnostic";
 import { chemicalPoundsPerDay, flowGpm, forceOnValve, gallonsInPipe, pipeArea, pressureToHead, scorePercent, velocityFps } from "../lib/math";
 import { Grade, MasteryRecord, Question } from "../lib/types";
 
@@ -45,7 +46,7 @@ export default function Home() {
     {view === "learn" && <OfficialPath activePhase={lesson.id === "water-journey" ? 0 : lesson.phase} onSelect={(phase) => { const index = availableLessons.findIndex((item) => item.phase === phase && item.id !== "water-journey"); if (index >= 0) { setLessonIndex(index); setAnswers({}); setSubmitted(false); window.scrollTo({ top: 0, behavior: "smooth" }); } }} />}
     {view === "learn" && <LessonScreen lesson={lesson} lessonNumber={lessonIndex + 1} totalLessons={availableLessons.length} answers={answers} setAnswers={setAnswers} submitted={submitted} submitQuiz={submitQuiz} nextLesson={nextLesson} />}
     {view === "exam" && <ExamInfo />}
-    {view === "diagnostic" && <Diagnostic grade={grade} mastery={mastery} setMastery={setMastery} />}
+    {view === "diagnostic" && <BankDiagnostic grade={grade} mastery={mastery} setMastery={setMastery} />}
     {view === "calculator" && <Calculator />}
     {view === "formula-sheet" && <ConversionSheet />}
     {view === "guide" && <><Guide /><StudyResources /></>}
