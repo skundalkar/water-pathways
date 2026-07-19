@@ -14,7 +14,7 @@ export function ExamInfo() {
     <p className="intro">The official D1 and D2 exams contain 100 questions. This page separates the State Board’s question allocation from the larger original practice bank we are building for reliable preparation.</p>
     <section className="exam-breakdown">
       <h3>Official exam categories</h3>
-      <table><thead><tr><th>Area</th><th>D1 exam</th><th>D2 exam</th><th>App target bank</th></tr></thead><tbody>{categories.map(row => <tr key={row[0]}>{row.map(cell => <td key={cell}>{cell}</td>)}</tr>)}</tbody></table>
+      <table><thead><tr><th>Area</th><th>D1 exam</th><th>D2 exam</th><th>App target bank</th></tr></thead><tbody>{categories.map(row => <tr key={row[0]}>{row.map((cell, index) => <td key={`${row[0]}-${index}`}>{cell}</td>)}</tr>)}</tbody></table>
       <p className="schedule-note">The app target is 350–500 original questions total, so students can practice several versions of an idea rather than memorize one answer.</p>
     </section>
     <section className="prep">
