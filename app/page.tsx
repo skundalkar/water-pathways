@@ -8,10 +8,11 @@ import { OfficialPath } from "./official-path";
 import { BankDiagnostic } from "./bank-diagnostic";
 import { WaterJourneyLab } from "./water-journey-lab";
 import { ConceptLab } from "./concept-lab";
+import { EquipmentResilience } from "./equipment-resilience";
 import { chemicalPoundsPerDay, flowGpm, forceOnValve, gallonsInPipe, pipeArea, pressureToHead, scorePercent, velocityFps } from "../lib/math";
 import { Grade, MasteryRecord, Question } from "../lib/types";
 
-type View = "learn" | "exam" | "diagnostic" | "calculator" | "formula-sheet" | "guide" | "glossary";
+type View = "learn" | "equipment" | "exam" | "diagnostic" | "calculator" | "formula-sheet" | "guide" | "glossary";
 const storageKey = "water-pathways-progress-v1";
 
 export default function Home() {
@@ -42,11 +43,12 @@ export default function Home() {
   function nextLesson() { setLessonIndex((n) => (n + 1) % availableLessons.length); setAnswers({}); setSubmitted(false); window.scrollTo({ top: 0, behavior: "smooth" }); }
 
   return <main>
-    <header className="topbar"><a className="brand" href="#top" onClick={() => setView("learn")}><span>◒</span> Water Pathways</a><nav>{(["learn", "exam", "diagnostic", "calculator", "formula-sheet", "guide", "glossary"] as View[]).map((item) => <button key={item} className={view === item ? "active" : ""} onClick={() => setView(item)}>{item === "learn" ? "Learn" : item === "formula-sheet" ? "Formula sheet" : item[0].toUpperCase() + item.slice(1)}</button>)}</nav></header>
+    <header className="topbar"><a className="brand" href="#top" onClick={() => setView("learn")}><span>◒</span> Water Pathways</a><nav>{(["learn", "equipment", "exam", "diagnostic", "calculator", "formula-sheet", "guide", "glossary"] as View[]).map((item) => <button key={item} className={view === item ? "active" : ""} onClick={() => setView(item)}>{item === "learn" ? "Learn" : item === "equipment" ? "Equipment" : item === "formula-sheet" ? "Formula sheet" : item[0].toUpperCase() + item.slice(1)}</button>)}</nav></header>
     <section className="hero" id="top"><div><p className="eyebrow">CALIFORNIA WATER DISTRIBUTION • BEGINNER FRIENDLY</p><h1>Learn the water system.<br /><em>One clear step at a time.</em></h1><p className="lede">Build confidence for California D1 and D2 with everyday examples, field stories, and practice that explains every answer.</p></div><div className="progress-card"><span>Your study path</span><strong>{grade} preparation</strong><div className="meter"><i style={{ width: `${Math.min(100, Object.keys(mastery).length * 20)}%` }} /></div><small>{Object.keys(mastery).length} objectives practiced · {needsReview} need review</small></div></section>
     <section className="grade-picker" aria-label="Choose certificate level"><span>Preparing for</span><button className={grade === "D1" ? "selected" : ""} onClick={() => selectGrade("D1")}>D1 Foundation</button><button className={grade === "D2" ? "selected" : ""} onClick={() => selectGrade("D2")}>D2 Advanced</button><p>New here? Begin with D1. D2 adds more application, equipment, and map-reading depth.</p></section>
     {view === "learn" && <OfficialPath activePhase={lesson.id === "water-journey" ? 0 : lesson.phase} onSelect={(phase) => { const index = availableLessons.findIndex((item) => item.phase === phase && item.id !== "water-journey"); if (index >= 0) { setLessonIndex(index); setAnswers({}); setSubmitted(false); } }} />}
     {view === "learn" && <LessonScreen lesson={lesson} lessonNumber={lessonIndex + 1} totalLessons={availableLessons.length} answers={answers} setAnswers={setAnswers} submitted={submitted} submitQuiz={submitQuiz} nextLesson={nextLesson} />}
+    {view === "equipment" && <EquipmentResilience />}
     {view === "exam" && <ExamInfo />}
     {view === "diagnostic" && <BankDiagnostic grade={grade} mastery={mastery} setMastery={setMastery} />}
     {view === "calculator" && <Calculator />}
