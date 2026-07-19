@@ -3,13 +3,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { certificationGuide, glossary, lessons } from "../lib/content";
 import { ExamInfo } from "./exam-info";
-import { ConversionSheet } from "./conversion-sheet";
+import { FormulaReference } from "./conversion-sheet";
 import { OfficialPath } from "./official-path";
 import { BankDiagnostic } from "./bank-diagnostic";
 import { chemicalPoundsPerDay, flowGpm, forceOnValve, gallonsInPipe, pipeArea, pressureToHead, scorePercent, velocityFps } from "../lib/math";
 import { Grade, MasteryRecord, Question } from "../lib/types";
 
-type View = "learn" | "exam" | "diagnostic" | "calculator" | "formula-sheet" | "guide" | "glossary";
+type View = "learn" | "exam" | "diagnostic" | "calculator" | "guide" | "glossary";
 const storageKey = "water-pathways-progress-v1";
 
 export default function Home() {
@@ -40,7 +40,7 @@ export default function Home() {
   function nextLesson() { setLessonIndex((n) => (n + 1) % availableLessons.length); setAnswers({}); setSubmitted(false); window.scrollTo({ top: 0, behavior: "smooth" }); }
 
   return <main>
-    <header className="topbar"><a className="brand" href="#top" onClick={() => setView("learn")}><span>◒</span> Water Pathways</a><nav>{(["learn", "exam", "diagnostic", "calculator", "formula-sheet", "guide", "glossary"] as View[]).map((item) => <button key={item} className={view === item ? "active" : ""} onClick={() => setView(item)}>{item === "learn" ? "Learn" : item === "diagnostic" ? "Practice" : item === "formula-sheet" ? "Formula sheet" : item[0].toUpperCase() + item.slice(1)}</button>)}</nav></header>
+    <header className="topbar"><a className="brand" href="#top" onClick={() => setView("learn")}><span>◒</span> Water Pathways</a><nav>{(["learn", "exam", "diagnostic", "calculator", "guide", "glossary"] as View[]).map((item) => <button key={item} className={view === item ? "active" : ""} onClick={() => setView(item)}>{item === "learn" ? "Learn" : item === "diagnostic" ? "Practice" : item === "calculator" ? "Math & formulas" : item[0].toUpperCase() + item.slice(1)}</button>)}</nav></header>
     <section className="hero" id="top"><div><p className="eyebrow">CALIFORNIA WATER DISTRIBUTION • BEGINNER FRIENDLY</p><h1>Learn the water system.<br /><em>One clear step at a time.</em></h1><p className="lede">Build confidence for California D1 and D2 with everyday examples, field stories, and practice that explains every answer.</p></div><div className="progress-card"><span>Your study path</span><strong>{grade} preparation</strong><div className="meter"><i style={{ width: `${Math.min(100, Object.keys(mastery).length * 20)}%` }} /></div><small>{Object.keys(mastery).length} objectives practiced · {needsReview} need review</small></div></section>
     <section className="grade-picker" aria-label="Choose certificate level"><span>Preparing for</span><button className={grade === "D1" ? "selected" : ""} onClick={() => selectGrade("D1")}>D1 Foundation</button><button className={grade === "D2" ? "selected" : ""} onClick={() => selectGrade("D2")}>D2 Advanced</button><p>New here? Begin with D1. D2 adds more application, equipment, and map-reading depth.</p></section>
     {view === "learn" && <StudyModes grade={grade} onPractice={() => { setView("diagnostic"); window.scrollTo({ top: 0, behavior: "smooth" }); }} />}
@@ -48,8 +48,7 @@ export default function Home() {
     {view === "learn" && <LessonScreen lesson={lesson} lessonNumber={lessonIndex + 1} totalLessons={availableLessons.length} answers={answers} setAnswers={setAnswers} submitted={submitted} submitQuiz={submitQuiz} nextLesson={nextLesson} />}
     {view === "exam" && <ExamInfo />}
     {view === "diagnostic" && <BankDiagnostic grade={grade} mastery={mastery} setMastery={setMastery} />}
-    {view === "calculator" && <Calculator />}
-    {view === "formula-sheet" && <ConversionSheet />}
+    {view === "calculator" && <MathCenter />}
     {view === "guide" && <><Guide /><StudyResources /></>}
     {view === "glossary" && <Glossary />}
     <footer><strong>Water Pathways</strong><p>A study aid, not an official State Water Board application or accredited course. Always confirm current rules, forms, fees, and exam requirements with the official source.</p></footer>
@@ -58,6 +57,19 @@ export default function Home() {
 
 function StudyModes({ grade, onPractice }: { grade: Grade; onPractice: () => void }) {
   return <section className="study-modes" aria-labelledby="study-modes-title"><div className="modes-intro"><p className="eyebrow">TWO WAYS TO STUDY</p><h2 id="study-modes-title">Learn first. Practice when you’re ready.</h2><p>Both modes use your {grade} path. Choose the one that fits what you need today.</p></div><div className="mode-cards"><article className="mode-card learn-mode"><span className="mode-icon">✦</span><p className="label">LEARN MODE · START HERE</p><h3>A guided beginner course</h3><p>Learn one idea at a time with everyday analogies, diagrams, field stories, worked math, and a short quiz that explains every answer.</p><ul><li>Best when a topic is new</li><li>Lessons build from the basics</li><li>Missed answers explain the reason why</li></ul><a href="#your-exam-path">Continue learning <span>→</span></a></article><article className="mode-card practice-mode"><span className="mode-icon">✓</span><p className="label">PRACTICE MODE · WHEN READY</p><h3>Check what you can apply</h3><p>Use mixed, exam-aligned questions to find strengths and weak areas. Every explanation sends you back to the concept to review.</p><ul><li>18-question balanced diagnostic</li><li>Questions from all six official categories</li><li>Untimed practice—not an official exam</li></ul><button onClick={onPractice}>Start practice <span>→</span></button></article></div></section>
+}
+
+function MathCenter() {
+  const [diameter, setDiameter] = useState(12);
+  const [length, setLength] = useState(100);
+  const [psi, setPsi] = useState(40);
+  const [volume, setVolume] = useState(500);
+  const [minutes, setMinutes] = useState(5);
+  const [mgL, setMgL] = useState(2);
+  const [mgd, setMgd] = useState(1);
+  const gpm = flowGpm(volume, minutes);
+
+  return <section className="page math-center"><p className="eyebrow">D1/D2 MATH & FORMULA CENTER</p><h2>Understand it. Work it. Check the official sheet.</h2><p className="intro">This is one place for learning a formula, trying it with your own numbers, and getting familiar with the State Board reference used on exam day. Start with a question—not a wall of symbols.</p><section className="math-steps" aria-label="How to use this page"><div><b>1</b><span><strong>Try a guided tool</strong>Change the numbers and see the answer.</span></div><div><b>2</b><span><strong>Learn the formula</strong>Open a plain-language worked example.</span></div><div><b>3</b><span><strong>Check the official sheet</strong>Compare the format used on the exam.</span></div></section><section className="calculator-area"><div><p className="label">STEP 1 · GUIDED TOOLS</p><h3>Start with the field question</h3><p>Each tool shows what its formula answers in real water-system work.</p></div><div className="calculator-grid"><section><p className="label">PIPE VOLUME</p><h3>How much water is inside?</h3><label>Pipe diameter (inches)<input type="number" value={diameter} min="0" onChange={e => setDiameter(Number(e.target.value))} /></label><label>Pipe length (feet)<input type="number" value={length} min="0" onChange={e => setLength(Number(e.target.value))} /></label><output>{gallonsInPipe(diameter, length).toFixed(1)} gallons</output><p><b>Formula:</b> cylinder volume. The pipe cross-section is {pipeArea(diameter).toFixed(1)} square inches.</p></section><section><p className="label">FLOW & VELOCITY</p><h3>How much, and how fast?</h3><label>Collected volume (gallons)<input type="number" value={volume} min="0" onChange={e => setVolume(Number(e.target.value))} /></label><label>Collection time (minutes)<input type="number" value={minutes} min="0" onChange={e => setMinutes(Number(e.target.value))} /></label><output>{gpm.toFixed(1)} gpm</output><p>In a {diameter}-inch pipe, that is <b>{velocityFps(gpm, diameter).toFixed(2)} feet per second</b>.</p></section><section><p className="label">PRESSURE & HEAD</p><h3>How much push is available?</h3><label>Pressure (psi)<input type="number" value={psi} min="0" onChange={e => setPsi(Number(e.target.value))} /></label><output>{pressureToHead(psi).toFixed(1)} feet of head</output><p>On a {diameter}-inch valve face, that pressure creates about <b>{forceOnValve(psi, diameter).toFixed(0)} pounds of force</b>.</p></section><section><p className="label">CHEMICAL FEED</p><h3>How much chemical per day?</h3><label>Desired dose (mg/L)<input type="number" value={mgL} min="0" step=".1" onChange={e => setMgL(Number(e.target.value))} /></label><label>Flow (MGD)<input type="number" value={mgd} min="0" step=".1" onChange={e => setMgd(Number(e.target.value))} /></label><output>{chemicalPoundsPerDay(mgL, mgd).toFixed(2)} lb/day</output><p><b>Formula:</b> MGD × mg/L × 8.34. Follow approved procedures for real feed settings.</p></section></div></section><FormulaReference /></section>;
 }
 
 function LessonScreen({ lesson, lessonNumber, totalLessons, answers, setAnswers, submitted, submitQuiz, nextLesson }: { lesson: typeof lessons[number]; lessonNumber: number; totalLessons: number; answers: Record<string, number>; setAnswers: (v: Record<string, number>) => void; submitted: boolean; submitQuiz: () => void; nextLesson: () => void }) {

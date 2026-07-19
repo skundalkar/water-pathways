@@ -10,16 +10,19 @@ const examples = [
   { title: "Force on a valve", formula: "pounds force = psi × area (in²)", example: "40 psi on a 12-inch circular face: area = .785 × 12² = 113 in²; force ≈ 4,520 lb.", why: "It explains why pressure can make a large valve difficult and hazardous to handle." }
 ];
 
-export function ConversionSheet() {
-  return <section className="page">
-    <p className="eyebrow">OFFICIAL EXAM REFERENCE</p>
-    <h2>California exam conversion sheet</h2>
-    <p className="intro">This is the State Water Board’s actual two-page formula and conversion sheet—the reference supplied for the exam. Use the Calculator section to learn what each formula means; use this sheet to become familiar with the official format.</p>
-    <section className="formula-examples"><p className="label">LEARN THE SHEET</p><h3>Worked examples in everyday language</h3><p>These examples teach the formula families most relevant to D1/D2. Write the units at every step, then compare the formula wording with the official sheet below.</p><div>{examples.map((item) => <article key={item.title}><h4>{item.title}</h4><code>{item.formula}</code><p><b>Example:</b> {item.example}</p><small>{item.why}</small></article>)}</div></section>
-    <section className="official-sheet">
-      <div><strong>State Water Resources Control Board · revised June 2, 2025</strong><a href={officialSheet} target="_blank" rel="noreferrer">Open the official sheet in a new tab ↗</a></div>
-      <iframe title="California Drinking Water Operator Exam Conversion Sheet" src={`${officialSheet}#view=FitH`} loading="lazy">Your browser cannot display the PDF. <a href={officialSheet} target="_blank" rel="noreferrer">Open the official conversion sheet.</a></iframe>
-    </section>
-    <p className="schedule-note">The sheet includes formulas used across drinking-water exams, including topics beyond D1/D2. Water Pathways will progressively label formulas as D1, D2, or advanced reference as the guided formula curriculum expands.</p>
+export function FormulaReference() {
+  return <section className="math-reference">
+    <details className="math-disclosure">
+      <summary><span><b>2</b> Learn the formula</span><small>Plain-language examples for the formulas students use most</small></summary>
+      <div className="formula-examples"><p className="label">READ THE FORMULA LIKE A FIELD TOOL</p><h3>Worked examples, step by step</h3><p>Open this when you want the “why” behind a calculator answer. Write the units at every step.</p><div>{examples.map((item) => <article key={item.title}><h4>{item.title}</h4><code>{item.formula}</code><p><b>Example:</b> {item.example}</p><small>{item.why}</small></article>)}</div></div>
+    </details>
+    <details className="math-disclosure official-reference">
+      <summary><span><b>3</b> Check the official exam sheet</span><small>The actual State Water Board conversion reference</small></summary>
+      <section className="official-sheet">
+        <div><strong>State Water Resources Control Board · revised June 2, 2025</strong><a href={officialSheet} target="_blank" rel="noreferrer">Open the official sheet in a new tab ↗</a></div>
+        <iframe title="California Drinking Water Operator Exam Conversion Sheet" src={`${officialSheet}#view=FitH`} loading="lazy">Your browser cannot display the PDF. <a href={officialSheet} target="_blank" rel="noreferrer">Open the official conversion sheet.</a></iframe>
+      </section>
+      <p className="schedule-note">The official sheet includes formulas used across drinking-water exams, including subjects beyond D1/D2. Water Pathways highlights the D1/D2-relevant formulas above.</p>
+    </details>
   </section>;
 }
