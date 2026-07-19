@@ -18,8 +18,10 @@ export default function Home() {
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [submitted, setSubmitted] = useState(false);
   const [mastery, setMastery] = useState<MasteryRecord>({});
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
+    setHydrated(true);
     const saved = localStorage.getItem(storageKey);
     if (saved) { try { setMastery(JSON.parse(saved)); } catch { /* start fresh */ } }
   }, []);
@@ -38,7 +40,7 @@ export default function Home() {
   }
   function nextLesson() { setLessonIndex((n) => (n + 1) % availableLessons.length); setAnswers({}); setSubmitted(false); window.scrollTo({ top: 0, behavior: "smooth" }); }
 
-  return <main>
+  return <main data-hydrated={hydrated ? "true" : "false"}>
     <header className="topbar"><a className="brand" href="#top" onClick={() => setView("learn")}><span>◒</span> Water Pathways</a><nav>{(["learn", "diagnostic", "calculator", "guide", "glossary"] as View[]).map((item) => <button key={item} className={view === item ? "active" : ""} onClick={() => setView(item)}>{item === "learn" ? "Learn" : item === "diagnostic" ? "Practice" : item === "calculator" ? "Math & formulas" : item === "guide" ? "Certification" : item[0].toUpperCase() + item.slice(1)}</button>)}</nav></header>
     <section className="hero" id="top"><div><p className="eyebrow">CALIFORNIA WATER DISTRIBUTION • BEGINNER FRIENDLY</p><h1>Learn the water system.<br /><em>One clear step at a time.</em></h1><p className="lede">Build confidence for California D1 and D2 with everyday examples, field stories, and practice that explains every answer.</p></div><div className="progress-card"><span>Your study path</span><strong>{grade} preparation</strong><div className="meter"><i style={{ width: `${Math.min(100, Object.keys(mastery).length * 20)}%` }} /></div><small>{Object.keys(mastery).length} objectives practiced · {needsReview} need review</small></div></section>
     <section className="grade-picker" aria-label="Choose certificate level"><span>Preparing for</span><button className={grade === "D1" ? "selected" : ""} onClick={() => selectGrade("D1")}>D1 Foundation</button><button className={grade === "D2" ? "selected" : ""} onClick={() => selectGrade("D2")}>D2 Advanced</button><p>New here? Begin with D1. D2 adds more application, equipment, and map-reading depth.</p></section>
