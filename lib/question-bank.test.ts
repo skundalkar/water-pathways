@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { distributionBlueprint } from "./blueprint";
 import { questionBank, questionBankByCategory } from "./question-bank";
 
 describe("practice question bank", () => {
@@ -12,5 +13,13 @@ describe("practice question bank", () => {
     expect(scenarioQuestions.some((question) => question.prompt.includes("valve"))).toBe(true);
     expect(scenarioQuestions.some((question) => question.prompt.includes("SCADA") || question.prompt.includes("control"))).toBe(true);
     scenarioQuestions.forEach((question) => expect(question.explanation).toMatch(/utility|engineering|design|procedure/i));
+  });
+  it("maps every published-app objective to practice and keeps D2-only practice out of D1", () => {
+    const objectives = distributionBlueprint.flatMap((category) => category.objectives);
+    objectives.forEach((objective) => {
+      const mapped = questionBank.filter((question) => question.objectiveId === objective.id);
+      expect(mapped.length, objective.id).toBeGreaterThan(0);
+      if (objective.grade === "D2") expect(mapped.every((question) => question.grade === "D2")).toBe(true);
+    });
   });
 });
